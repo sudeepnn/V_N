@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V.N FAMILY</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+    <link rel="manifest" href="favicon/site.webmanifest">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" href="style.css">
+    <style>
+         body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .gallery img {
+           
+            width: 95%;
+            height: 100%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            object-fit: cover;
+
+        }
+        .gallery-item{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+    </style>
+    <link rel="stylesheet" href="styles/sty.css">
+    <script src="https://cdn.jsdelivr.net/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/packery/2.1.2/packery.pkgd.min.js"></script>
+</head>
+<body>
+    <div class="navbar">
+        <a href="index.html"><img class="doc" src="images/back-button.png" alt=""></a>
+        <img class="fam_logo" src="images/logo.png" alt="" srcset="">
+    </div>
+    
+    <div style="width: 100%;text-align: center; margin-top: 20px;font-size: 20px;" id="loadingMessage">Loading...</div>
+<div class="gallery" id="imageGallery"></div>
+
+
+<script>
+    // Fetch image URLs from the server
+    async function fetchImageUrls() {
+        try {
+            const loadingMessage = document.getElementById('loadingMessage');
+        loadingMessage.style.display = 'grid';
+            const response = await fetch('https://belekeri-api.onrender.com/');
+            const imageUrls = await response.json();
+            loadingMessage.style.display = 'none';
+            return imageUrls;
+        } catch (error) {
+            console.error('Error fetching image URLs:', error.message);
+            const loadingMessage = document.getElementById('loadingMessage');
+        loadingMessage.style.display = 'none';
+            return [];
+        }
+    }
+
+    // Load and display images with lazy loading
+    async function loadImagesWithMasonry() {
+        const imageGallery = document.getElementById('imageGallery');
+        const imageUrls = await fetchImageUrls();
+
+        imageUrls.forEach(url => {
+            const img = document.createElement('img');
+            img.src = url;
+            img.alt = 'Gallery Image';
+            img.loading = 'lazy'; // Enable lazy loading
+
+            const imageContainer = document.createElement('div');
+            imageContainer.classList.add('gallery-item');
+            imageContainer.appendChild(img);
+
+            imageGallery.appendChild(imageContainer);
+        });
+
+        // Initialize Masonry
+        document.addEventListener('DOMContentLoaded', () => {
+    // Your code here, including the initialization of Packery
+    const masonry = new Packery('.gallery', {
+        itemSelector: '.gallery-item',
+        gutter: 10,
+    });
+});
+
+    }
+
+    // Load images with Masonry when the page is ready
+    document.addEventListener('DOMContentLoaded', () => {
+        loadImagesWithMasonry();
+    });
+</script>
+
+</body>
+</html>
